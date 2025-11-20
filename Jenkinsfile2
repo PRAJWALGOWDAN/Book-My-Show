@@ -22,7 +22,7 @@ pipeline {
 
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/Ganesha2003/Book-My-Show.git'
+                git branch: 'main', url: 'https://github.com/PRAJWALGOWDAN/Book-My-Show.git'
                 sh 'ls -la'  // Verify files after checkout
             }
         }
@@ -75,22 +75,19 @@ pipeline {
                 sh 'trivy fs . > trivyfs.txt'
             }
         }
-
+/* ---------------- Docker Build & Push ---------------- */
         stage('Docker Build & Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
-                        sh ''' 
-                        echo "Building Docker image..."
-                        docker build --no-cache -t $DOCKER_IMAGE -f bookmyshow-app/Dockerfile bookmyshow-app
-
-                        echo "Pushing Docker image to Docker Hub..."
+                    withDockerRegistry(credentialsId: 'docker-creds') {
+                        sh '''
+                        docker build -t $DOCKER_IMAGE -f bookmyshow-app/Dockerfile bookmyshow-app
                         docker push $DOCKER_IMAGE
                         '''
                     }
                 }
-            }
-        }
+            }
+        }
 
         stage('Deploy to EKS Cluster') {
             steps {
