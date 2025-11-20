@@ -75,7 +75,6 @@ pipeline {
                 sh 'trivy fs . > trivyfs.txt'
             }
         }
-/* ---------------- Docker Build & Push ---------------- */
         stage('Docker Build & Push') {
             steps {
                 script {
